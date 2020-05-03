@@ -6,6 +6,8 @@ import { RectButton, ScrollView } from 'react-native-gesture-handler';
 
 export default function LinksScreen() {
   return (
+    <View>
+    {/*
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <OptionButton
         icon="md-school"
@@ -26,6 +28,8 @@ export default function LinksScreen() {
         isLastOption
       />
     </ScrollView>
+    */}
+    </View>
   );
 }
 
