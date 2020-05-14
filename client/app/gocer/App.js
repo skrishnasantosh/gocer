@@ -9,12 +9,16 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 
 import LinkingConfiguration from './navigation/LinkingConfiguration';
 import TabNavigator from './navigation/TabNavigator';
+import BottomNavigator from './navigation/BottomNavigator';
+import LoginSreen from './screens/LoginScreen';
 
 const Stack = createStackNavigator();
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
+  const shouldShowLogin = true;
 
+  
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
@@ -40,6 +44,11 @@ export default function App(props) {
     loadResourcesAndDataAsync();
   }, []);
 
+  if (shouldShowLogin)
+    return (
+      <LoginSreen/>
+    )
+
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return null;
   } else {
@@ -59,13 +68,6 @@ export default function App(props) {
       <Content>
         <TabNavigator/>
       </Content>
-      <Footer>
-        <FooterTab>
-          <Button full>
-            <Text>Footer</Text>
-          </Button>
-        </FooterTab>
-      </Footer>
     </Container>
     );
   }

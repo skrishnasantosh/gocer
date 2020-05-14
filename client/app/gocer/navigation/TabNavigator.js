@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet} from 'react-native'
 import { Container, Header, Tab, Tabs, TabHeading, Icon, Text } from 'native-base';
 import ScheduleScreen from '../screens/ScheduleScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 export default class TabNavigator extends Component {
   render() {
@@ -10,7 +11,7 @@ export default class TabNavigator extends Component {
         <Tabs>
             <Tab heading = { <TabHeading><Icon name="home"/><Text>Home</Text></TabHeading> }>
                 <Container style={styles.container}>
-                  <Text>Hi</Text>
+                  <HomeScreen/>
                 </Container>
             </Tab>
             <Tab heading = { <TabHeading><Icon name="calendar"/><Text>Schedule</Text></TabHeading> }>                
