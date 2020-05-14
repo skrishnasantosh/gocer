@@ -1,0 +1,7 @@
+client/app/gocer/debug.log
+client/node_modules/
+server/Skybean.Gocer/.vs/
+server/Skybean.Gocer/.vscode/
+server/Skybean.Gocer/Properties/
+server/Skybean.Gocer/bin/
+server/Skybean.Gocer/obj/
