@@ -14,7 +14,7 @@ namespace Skybean.Gocer.Controllers
     public class LoginController : ControllerBase
     {
         string twilioAccountSid = "AC1e6dabeb68147fb8231ef35a392a16c8";
-        string twilioAuthToken = "82472e3ed3abd93a651a6ff241ebf6f2";
+        string twilioAuthToken = "60463b6847b507fa9d7be7c2d1929bcc";
 
 
         [HttpPost]
@@ -43,8 +43,9 @@ namespace Skybean.Gocer.Controllers
                 await context.SaveChangesAsync();
             }
 
-            SendSms(postModel.PhoneNumber, "OTP for Skybean GoSafe is " + otp);
+            //SendSms(postModel.PhoneNumber, "OTP for Skybean GoSafe is " + otp);
 
+            otp = "123456";
             return Ok(otp);
         }
 

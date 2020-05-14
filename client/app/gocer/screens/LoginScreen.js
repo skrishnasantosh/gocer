@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {StyleSheet, View, Modal} from 'react-native'
+import {StyleSheet, View, Modal, Alert} from 'react-native'
 import { Container, Header, Content, Text, Body, Title, Form, Label, Item, Input, Button, DeckSwiper, Left, Right, Grid, Row, Col, Icon, Center } from 'native-base'
 import PhoneInput from 'react-native-phone-input'
 import OTPInput from 'react-native-otp';
@@ -8,43 +8,105 @@ import axios from 'axios';
 
 export default class LoginSreen extends Component {
 
+    phoneNumberEntry;
     
     state = {
-        otp: '',
+        givenOtp: '',
+        generatedOtp: '',
         phoneNumber: '',
-        showOtpBox: false
+        showOtpBox: false,
+        
+        buttonState: {
+            verificationCode : true,
+            login: true
+        }
+    }
+
+    constructor(props)
+    {
+        super(props);
+    }
+    
+    componentDidMount() {
+        
     }
     
     handleOTPChange = (otp) => {
-        this.setState({ otp })
+        this.setState({ 
+            givenOtp: otp
+         })
     }
 
 
     showPhoneBox = () => {
         this.setState({
             showOtpBox : false,
-            otp: ''
+            givenOtp: ''
         })
     }
 
     handleSendOtp = () => { 
         console.log(this.state.phoneNumber);
 
-        axios.post('http://192.168.0.101:5000/Login', { 
-                phone: "+65" + this.state.phoneNumber            
-        })
-        .then((response) => {
-            console.log("Otp is : " + JSON.stringify(response));
+        if (this.state.phoneNumber === undefined || this.state.phoneNumber.length < 8)
+        {
+            Alert.alert("Invalid phone number. Please try again");
             this.setState({
-                showOtpBox: true
+                phoneNumber : ''
+            });
+            
+            this.phoneNumberEntry.focus();
+            return;
+        }
+        else
+        {
+
+            this.setState({
+                buttonState: {
+                    verificationCode: false
+                }
+            });
+
+            axios.post('http://192.168.0.101:5000/Login', { 
+                    phone: "+65" + this.state.phoneNumber            
             })
-        });        
+            .then((response) => {
+                console.log("Otp is : " + JSON.stringify(response));
+                this.setState({
+                    showOtpBox: true,                      
+                    generatedOtp: response.data,          
+                    buttonState: {
+                        verificationCode: true
+                    }
+                })
+            });
+        }
     }
 
     phoneNumberChanged = (number) => {
         this.setState({
-            phoneNumber: number
+            phoneNumber: number 
         })
+    }
+
+    doLogin = () => {
+        console.log("Generated Otp : " + this.state.generatedOtp + ".");
+        console.log("Given Otp : " + this.state.givenOtp + ".");
+        console.log("Phone Number : " + this.state.phoneNumber);
+        console.log("OTP matches with == : " + this.state.givenOtp.valueOf() == this.state.generatedOtp.valueOf());
+        console.log("OTP matches with === : " + this.state.givenOtp.valueOf() === this.state.generatedOtp.valueOf());        
+        if (this.state.givenOtp.localeCompare(this.state.generatedOtp) ===  0)
+        {
+            Alert.alert("Incorrect Verification code. Please try again");
+            this.setState({
+                givenOtp:''
+            });
+
+            return;
+        }
+
+        if (this.props.loginHandler)
+            this.props.loginHandler(this.state.phoneNumber);
     }
 
      render() {
@@ -60,9 +122,9 @@ export default class LoginSreen extends Component {
                     <Text note style={{marginBottom:20}}>
                         Phone Number
                     </Text>
-                    <PhoneInput ref='phone' autoFormat={true} initialCountry={'sg'} style={styles.phoneInput} onChangePhoneNumber={(n) => this.phoneNumberChanged(n)} />                    
+                    <PhoneInput ref={ x => this.phoneNumberEntry = x } value={this.state.phoneNumber} autoFormat={true} initialCountry={'sg'} style={styles.phoneInput} onChangePhoneNumber={(n) => this.phoneNumberChanged(n)} />                    
                 
-                    <Button primary style={{marginTop: 50, width:220, justifyContent: 'center', alignSelf:'center'}} onPress={() => this.handleSendOtp()}>
+                    <Button primary style={{marginTop: 50, width:220, justifyContent: 'center', alignSelf:'center'}} disabled={!this.state.buttonState.verificationCode} onPress={() => this.handleSendOtp()}>
                         <Text>Send Verification Code</Text>
                     </Button>
                 </View>
@@ -82,19 +144,19 @@ export default class LoginSreen extends Component {
                                 Verification Code
                         </Text>
                         <OTPInput
-                            value={this.state.otp}
+                            value={this.state.givenOtp}
                             onChange={this.handleOTPChange}
                             tintColor="#21749C"
                             offTintColor="#BBBCBE"
                             otpLength={6}
                             />
 
-                        <View style={{ marginTop: 20, flexDirection: "row", flex: 1,  left: 0, right: 0, justifyContent: 'space-between', padding: 15, marginLeft:47, marginRight:47}}>
+                        <View style={{ marginTop: 20, flexDirection: "row", flex: 1,  left: 0, right: 0, justifyContent: 'space-between', padding: 15, marginLeft: Platform.OS === "android" ? 0: 47, marginRight:Platform.OS === "android" ? 0: 47}}>
                             <Button iconLeft onPress={() => this.showPhoneBox()}>
                                 <Icon name="arrow-back" />
                                 <Text>Back  </Text>
                             </Button>
-                            <Button>            
+                            <Button onPress = {() => this.doLogin()}>             
                                 <Text>Verify and Login</Text>
                             </Button>
                         </View>                           

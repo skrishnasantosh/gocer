@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SplashScreen } from 'expo';
 import * as Font from 'expo-font';
 import * as React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, Alert } from 'react-native';
 
 import LinkingConfiguration from './navigation/LinkingConfiguration';
 import TabNavigator from './navigation/TabNavigator';
@@ -14,17 +14,18 @@ import LoginSreen from './screens/LoginScreen';
 
 const Stack = createStackNavigator();
 
-export default function App(props) {
-  const [isLoadingComplete, setLoadingComplete] = React.useState(false);
-  const shouldShowLogin = true;
+export default class App extends React.Component {
+  state = {
+    isLoadingComplete: false,
+    setLoadingComplete: false,
+    shouldShowLogin: true
+  };
 
-  
-  // Load any resources or data that we need prior to rendering the app
-  React.useEffect(() => {
+  constructor(props){
+
     async function loadResourcesAndDataAsync() {
       try {
-        SplashScreen.preventAutoHide();
-
+    
         // Load fonts
         await Font.loadAsync({
           ...Ionicons.font,          
@@ -36,20 +37,36 @@ export default function App(props) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);
       } finally {
-        setLoadingComplete(true);
+        this.setState({
+          setLoadingComplete: true
+        });
         SplashScreen.hide();
       }
     }
 
     loadResourcesAndDataAsync();
-  }, []);
+    super(props);
 
-  if (shouldShowLogin)
+  }
+
+  doLogin = (phone) => {
+    Alert.alert(phone);
+  }
+
+  useEffect = () => {
+   
+  }
+  
+  render() {
+  if (this.state.shouldShowLogin)
+  {
     return (
-      <LoginSreen/>
-    )
+      <LoginSreen loginHandler={() => this.doLogin()}/>
+    );
+  }
+  else{
 
-  if (!isLoadingComplete && !props.skipLoadingScreen) {
+  if (!this.state.isLoadingComplete && !props.skipLoadingScreen) {
     return null;
   } else {
     return (
@@ -71,6 +88,8 @@ export default function App(props) {
     </Container>
     );
   }
+}
+}
 }
 
 const styles = StyleSheet.create({

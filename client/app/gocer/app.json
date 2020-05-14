@@ -23,7 +23,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes",
+        "NSLocationWhenInUseUsageDescription": "This app uses location to show registered establishments around you"
+      }
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
